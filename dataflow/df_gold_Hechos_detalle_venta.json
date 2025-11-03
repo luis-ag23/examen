@@ -15,10 +15,21 @@
 					"name": "source1"
 				}
 			],
-			"sinks": [],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "ds_gold_Hechos_detalle_venta",
+						"type": "DatasetReference"
+					},
+					"name": "sink1"
+				}
+			],
 			"transformations": [
 				{
-					"name": "derivedColumn1"
+					"name": "cast1"
+				},
+				{
+					"name": "sort1"
 				}
 			],
 			"scriptLines": [
@@ -36,7 +47,33 @@
 				"     validateSchema: false,",
 				"     isolationLevel: 'READ_UNCOMMITTED',",
 				"     format: 'table') ~> source1",
-				"source1 derive() ~> derivedColumn1"
+				"source1 cast(output(",
+				"          SLS_ORDER_DT as integer,",
+				"          SLS_SHIP_DT as integer",
+				"     ),",
+				"     errors: true) ~> cast1",
+				"cast1 sort(asc(SLS_ORD_NUM, true)) ~> sort1",
+				"sort1 sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     input(",
+				"          ID_HECHOS as integer,",
+				"          SLS_ORD_NUM as string,",
+				"          SLS_PRD_KEY as string,",
+				"          SLS_CUST_ID as string,",
+				"          ID_ORDER_DT as integer,",
+				"          ID_SHIP_DT as integer,",
+				"          SLS_SALES as integer,",
+				"          SLS_QUANTITY as integer,",
+				"          SLS_PRICE as integer",
+				"     ),",
+				"     deletable:false,",
+				"     insertable:true,",
+				"     updateable:false,",
+				"     upsertable:false,",
+				"     format: 'table',",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     errorHandlingOption: 'stopOnFirstError') ~> sink1"
 			]
 		}
 	}
