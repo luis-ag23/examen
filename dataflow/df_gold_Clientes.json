@@ -30,6 +30,9 @@
 				},
 				{
 					"name": "cast1"
+				},
+				{
+					"name": "filter1"
 				}
 			],
 			"scriptLines": [
@@ -64,7 +67,8 @@
 				"          CST_ID as string",
 				"     ),",
 				"     errors: true) ~> cast1",
-				"cast1 sink(allowSchemaDrift: true,",
+				"cast1 filter(!isNull(CST_ID)) ~> filter1",
+				"filter1 sink(allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     input(",
 				"          CST_ID as string,",
