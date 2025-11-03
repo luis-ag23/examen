@@ -1,0 +1,52 @@
+{
+	"name": "df_silver_clientes",
+	"properties": {
+		"folder": {
+			"name": "Silver"
+		},
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "ds_sql_Clientes",
+						"type": "DatasetReference"
+					},
+					"name": "Clientes"
+				},
+				{
+					"dataset": {
+						"referenceName": "ds_sql_CLIENTES_DB_GEN",
+						"type": "DatasetReference"
+					},
+					"name": "ClientesDBGEN"
+				}
+			],
+			"sinks": [],
+			"transformations": [],
+			"scriptLines": [
+				"source(output(",
+				"          CST_ID as string,",
+				"          CST_KEY as string,",
+				"          CST_FIRSTNAME as string,",
+				"          CST_LASTNAME as string,",
+				"          CST_MARITAL_STATUS as string,",
+				"          CST_GNRD as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     isolationLevel: 'READ_UNCOMMITTED',",
+				"     format: 'table') ~> Clientes",
+				"source(output(",
+				"          CID as string,",
+				"          BDATE as string,",
+				"          GEN as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     isolationLevel: 'READ_UNCOMMITTED',",
+				"     format: 'table') ~> ClientesDBGEN"
+			]
+		}
+	}
+}
