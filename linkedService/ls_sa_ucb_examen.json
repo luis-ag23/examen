@@ -1,0 +1,12 @@
+{
+	"name": "ls_sa_ucb_examen",
+	"type": "Microsoft.DataFactory/factories/linkedservices",
+	"properties": {
+		"annotations": [],
+		"type": "AzureBlobStorage",
+		"typeProperties": {
+			"connectionString": "DefaultEndpointsProtocol=https;AccountName=saucbexamen15645;EndpointSuffix=core.windows.net;",
+			"encryptedCredential": "ew0KICAiVmVyc2lvbiI6ICIyMDE3LTExLTMwIiwNCiAgIlByb3RlY3Rpb25Nb2RlIjogIktleSIsDQogICJTZWNyZXRDb250ZW50VHlwZSI6ICJQbGFpbnRleHQiLA0KICAiQ3JlZGVudGlhbElkIjogIkRBVEFGQUNUT1JZQERCNjE0N0RDLThFQzEtNDA2Ny04NjVBLTg4REY3QTNGMkE0OV9lMzE0OTM1OC1kNWUxLTRmZWUtOTA0YS1hNzIxNDNhZDc1YTYiDQp9"
+		}
+	}
+}
