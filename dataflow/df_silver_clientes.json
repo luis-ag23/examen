@@ -20,10 +20,44 @@
 						"type": "DatasetReference"
 					},
 					"name": "ClientesDBGEN"
+				},
+				{
+					"dataset": {
+						"referenceName": "ds_sql_Clientes_location",
+						"type": "DatasetReference"
+					},
+					"name": "ClientesLocation"
 				}
 			],
-			"sinks": [],
-			"transformations": [],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "ds_sql_silver_Clientes",
+						"type": "DatasetReference"
+					},
+					"name": "sink1"
+				}
+			],
+			"transformations": [
+				{
+					"name": "derivedColumn1"
+				},
+				{
+					"name": "join1"
+				},
+				{
+					"name": "derivedColumn2"
+				},
+				{
+					"name": "join2"
+				},
+				{
+					"name": "select1"
+				},
+				{
+					"name": "cast1"
+				}
+			],
 			"scriptLines": [
 				"source(output(",
 				"          CST_ID as string,",
@@ -45,7 +79,77 @@
 				"     allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     isolationLevel: 'READ_UNCOMMITTED',",
-				"     format: 'table') ~> ClientesDBGEN"
+				"     format: 'table') ~> ClientesDBGEN",
+				"source(output(",
+				"          CID as string,",
+				"          CNTRY as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     isolationLevel: 'READ_UNCOMMITTED',",
+				"     format: 'table') ~> ClientesLocation",
+				"ClientesDBGEN derive(id_Normalizada = substring(CID, 4)) ~> derivedColumn1",
+				"Clientes, derivedColumn1 join(CST_KEY == id_Normalizada,",
+				"     joinType:'left',",
+				"     matchType:'exact',",
+				"     ignoreSpaces: false,",
+				"     broadcast: 'auto')~> join1",
+				"ClientesLocation derive(id_Normalizada = replace(CID, '-', '')) ~> derivedColumn2",
+				"join1, derivedColumn2 join(derivedColumn1@id_Normalizada == derivedColumn2@id_Normalizada,",
+				"     joinType:'left',",
+				"     matchType:'exact',",
+				"     ignoreSpaces: false,",
+				"     broadcast: 'auto')~> join2",
+				"cast1 select(mapColumn(",
+				"          CST_ID,",
+				"          CST_KEY,",
+				"          CST_FIRSTNAME,",
+				"          CST_LASTNAME,",
+				"          CST_MARITAL_STATUS,",
+				"          CST_GNRD,",
+				"          BDATE,",
+				"          GEN,",
+				"          CNTRY",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> select1",
+				"join2 cast(output(",
+				"          CST_ID as integer,",
+				"          BDATE as date 'yyyy-MM-dd'",
+				"     ),",
+				"     errors: true) ~> cast1",
+				"select1 sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     input(",
+				"          CST_ID as integer,",
+				"          CST_KEY as string,",
+				"          CST_FIRSTNAME as string,",
+				"          CST_LASTNAME as string,",
+				"          CST_MARITAL_STATUS as string,",
+				"          CST_GNRD as string,",
+				"          CNTRY as string,",
+				"          BDATE as date,",
+				"          GEN as string",
+				"     ),",
+				"     deletable:false,",
+				"     insertable:true,",
+				"     updateable:false,",
+				"     upsertable:false,",
+				"     format: 'table',",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     errorHandlingOption: 'stopOnFirstError',",
+				"     mapColumn(",
+				"          CST_ID,",
+				"          CST_KEY,",
+				"          CST_FIRSTNAME,",
+				"          CST_LASTNAME,",
+				"          CST_MARITAL_STATUS,",
+				"          CST_GNRD,",
+				"          CNTRY,",
+				"          BDATE,",
+				"          GEN",
+				"     )) ~> sink1"
 			]
 		}
 	}
