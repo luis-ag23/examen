@@ -33,6 +33,9 @@
 				},
 				{
 					"name": "filter1"
+				},
+				{
+					"name": "aggregate1"
 				}
 			],
 			"scriptLines": [
@@ -68,7 +71,9 @@
 				"     ),",
 				"     errors: true) ~> cast1",
 				"cast1 filter(!isNull(CST_ID)) ~> filter1",
-				"filter1 sink(allowSchemaDrift: true,",
+				"filter1 aggregate(groupBy(CST_ID),",
+				"     each(match(name!='CST_ID'), $$ = first($$))) ~> aggregate1",
+				"aggregate1 sink(allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     input(",
 				"          CST_ID as string,",
