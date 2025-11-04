@@ -39,9 +39,6 @@
 					"name": "sort1"
 				},
 				{
-					"name": "derivedColumn1"
-				},
-				{
 					"name": "lookup1"
 				}
 			],
@@ -78,7 +75,6 @@
 				"     ),",
 				"     errors: true) ~> cast1",
 				"cast1 sort(asc(SLS_ORD_NUM, true)) ~> sort1",
-				"source2 derive(id_normalizada = substring(PRD_KEY,4)) ~> derivedColumn1",
 				"sort1, source2 lookup(SLS_PRD_KEY == PRD_KEY,",
 				"     multiple: false,",
 				"     pickup: 'any',",
